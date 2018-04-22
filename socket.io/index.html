@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>socket.io example</title>
+</head>
+<!-- 计数器 -->
+<!-- <body>
+    <script src="/socket.io/socket.io.js"></script>
+    <h1>how many users are connecting now?</h1>
+    <p id="count"></p>
+    <script>
+        var socket = io.connect('http://127.0.0.1:1000');
+        var count = document.getElementById("count");
+        socket.on("users",function(data){
+            console.log('got update from server');
+            console.log('there are' + data.number + 'users');
+            count.innerHTML = data.number;
+        })
+    </script>
+</body> -->
+
+<!-- 客户间发送消息 -->
+<body>
+    <script src="/socket.io/socket.io.js"></script>
+    <form action="#" id="message_form">
+      <textarea name="" id="message" cols="30" rows="10"></textarea>
+      <button id="send">send message</button>
+    </form>
+    <p id="text"></p>
+    <script>
+        var socket = io.connect('http://127.0.0.1:1000');
+        var message = document.getElementById("message");
+        var send =document.getElementById("send");
+        var form = document.getElementById("message_form");
+        var  text = document.getElementById("text");
+        send.onclick=function(){
+            socket.emit('message',{text:message.value});
+            return false;
+        }
+        socket.on('push message',function(data){
+            text.innerHTML += '<p>'+data.text+'</p>';
+        });
+    </script>
+</body>
+
+</html>

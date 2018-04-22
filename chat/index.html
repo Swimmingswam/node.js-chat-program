@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>socket.io chatting!</title>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="http://libs.baidu.com/jquery/2.1.1/jquery.min.js"></script>
+</head>
+
+<body>
+    <h1>let's chatting~</h1>
+    <form action="" id="form">
+        <label for="nickname">Nick_name:</label>
+        <input type="text" id="nickname">
+        <input type="submit">
+    </form>
+    <form action="" id="send_message">
+       <textarea id="message" name="" id="" cols="30" rows="10"></textarea>
+       <input type="submit">
+    </form>
+    <p id="nickname_t">在线好友：</p>
+    <section id="nickname_list">
+        <ul></ul>
+    </section>
+    <p id="chat_t">聊天记录：</p>
+    <section id="message_list">
+
+    </section>
+    <script>
+        var socket = io.connect();
+        $(function ($) {
+            var nickname = $("#nickname");
+            var form = $("#form");
+            var nicknamelist = $("#nickname_list ul");
+            var messageform = $("#send_message");
+            messageform.hide();
+            var message = $("#message");
+            var messagelist = $("#message_list");
+            var nickname_t = $("#nickname_t");
+            nickname_t.hide();
+            var chat_t = $("#chat_t");
+            chat_t.hide();
+            form.submit(function (event) {
+                event.preventDefault();
+                socket.emit('nickname', nickname.val(), function (data) {
+                    if (data) {
+                        console.log('nickname set is sucessful!');
+                        form.hide();
+                        messageform.show();
+                    } else {
+                        form.prepend('<p>sorry - that nickname is already taken .</p>')
+                    }
+                });
+            });
+            messageform.submit(function(event){
+                event.preventDefault();
+                socket.emit('user_message',message.val());
+                message.val('').focus();
+            })
+            socket.on('nicknames',function(data){
+                var html='';
+                for(var i = 0; i<data.length;i++){
+                    html+='<li>'+data[i]+'</li>'
+                }
+                nicknamelist.empty().append(html);
+                nickname_t.show();
+            });
+            socket.on('user_message',function(data){
+                messagelist.append('<p><strong>'+data.nick+":"+'</strong>'+data.message+'</p>');
+                chat_t.show();
+            });
+        });
+
+
+
+    </script>
+</body>
+
+</html>
